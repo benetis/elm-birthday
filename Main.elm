@@ -4,10 +4,11 @@ import Html exposing (..)
 import Html.App as App
 import Date
 import Time exposing (..)
+import Date.Extra.Duration exposing (diff, DeltaRecord, zeroDelta)
 
 
 type alias Model =
-    Time
+    { time : Time, delta : DeltaRecord }
 
 
 type Msg
@@ -16,37 +17,42 @@ type Msg
 
 initModel : ( Model, Cmd Msg )
 initModel =
-    ( 0, Cmd.none )
+    ( { time = 0, delta = zeroDelta }, Cmd.none )
 
 
-dateStringToTime : String -> Time
-dateStringToTime date =
+diffDates : String -> Time -> DeltaRecord
+diffDates date currTime =
     case Date.fromString date of
         Err msg ->
-            1477152604310
+            zeroDelta
 
         Ok value ->
-            Date.toTime value
+            diff (Date.fromTime currTime) value
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg update =
     case msg of
         Tick newTime ->
-            ( dateStringToTime "1993-01-01 17:00"
-            , Cmd.none
+            ({ update
+                | delta =
+                    diffDates
+                        "1993-01-01 17:00"
+                        newTime.time
+             }
+                ! []
             )
 
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every second Tick
+    Time.every millisecond (\x -> Tick { time = x, delta = zeroDelta })
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ (Date.fromTime >> toString >> text) model ]
+        [ h1 [] [ (toString >> text) model.delta ]
         ]
 
 
