@@ -9210,6 +9210,9 @@ var _rluiten$elm_date_extra$Date_Extra_Duration$Minute = {ctor: 'Minute'};
 var _rluiten$elm_date_extra$Date_Extra_Duration$Second = {ctor: 'Second'};
 var _rluiten$elm_date_extra$Date_Extra_Duration$Millisecond = {ctor: 'Millisecond'};
 
+var _benetis$elm_birthday$Main$calculateRatio = function (model) {
+	return (((((_elm_lang$core$Basics$toFloat(model.delta.year) + (_elm_lang$core$Basics$toFloat(model.delta.month) / 12)) + (_elm_lang$core$Basics$toFloat(model.delta.day) / 365)) + (_elm_lang$core$Basics$toFloat(model.delta.hour) / (60 * 365))) + (_elm_lang$core$Basics$toFloat(model.delta.minute) / ((60 * 60) * 365))) + (_elm_lang$core$Basics$toFloat(model.delta.second) / (((60 * 60) * 60) * 365))) + (_elm_lang$core$Basics$toFloat(model.delta.millisecond) / ((((1000 * 60) * 60) * 60) * 365));
+};
 var _benetis$elm_birthday$Main$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9225,8 +9228,9 @@ var _benetis$elm_birthday$Main$view = function (model) {
 					[
 						function (_p0) {
 						return _elm_lang$html$Html$text(
-							_elm_lang$core$Basics$toString(_p0));
-					}(model.delta)
+							_elm_lang$core$Basics$toString(
+								_benetis$elm_birthday$Main$calculateRatio(_p0)));
+					}(model)
 					]))
 			]));
 };
@@ -9273,7 +9277,9 @@ var _benetis$elm_birthday$Main$subscriptions = function (model) {
 		_elm_lang$core$Time$millisecond,
 		function (x) {
 			return _benetis$elm_birthday$Main$Tick(
-				{time: x, delta: _rluiten$elm_date_extra$Date_Extra_Duration$zeroDelta});
+				_elm_lang$core$Native_Utils.update(
+					model,
+					{time: x}));
 		});
 };
 var _benetis$elm_birthday$Main$main = {

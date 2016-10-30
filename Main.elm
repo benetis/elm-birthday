@@ -46,13 +46,24 @@ update msg update =
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
-    Time.every millisecond (\x -> Tick { time = x, delta = zeroDelta })
+    Time.every millisecond (\x -> Tick { model | time = x })
+
+
+calculateRatio : Model -> Float
+calculateRatio model =
+    toFloat model.delta.year
+        + (toFloat model.delta.month / 12)
+        + (toFloat model.delta.day / 365)
+        + (toFloat model.delta.hour / (60 * 365))
+        + (toFloat model.delta.minute / (60 * 60 * 365))
+        + (toFloat model.delta.second / (60 * 60 * 60 * 365))
+        + (toFloat model.delta.millisecond / (1000 * 60 * 60 * 60 * 365))
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ h1 [] [ (toString >> text) model.delta ]
+        [ h1 [] [ (calculateRatio >> toString >> text) model ]
         ]
 
 
